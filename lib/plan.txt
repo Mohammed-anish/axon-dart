@@ -1,0 +1,51 @@
+////starter
+
+main(){
+
+Hydro.server.start();
+
+}
+
+
+
+class Server extends ServerRoot{
+    
+    ServerConfiguration configuration;
+    
+    bool get logs=>true;
+
+    @override
+    List<Route> routes=[];
+
+}
+
+
+//each route will have method
+
+class Root extends Route{
+
+String get target=>'/';
+
+get(){
+
+}
+
+post(){
+
+}
+delete(){
+
+}
+put(){
+
+}
+
+custom(){
+
+}
+
+socket(){
+
+}
+
+}
