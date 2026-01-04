@@ -1,51 +1,24 @@
-////starter
+import 'package:axon/axon.dart';
+import 'package:axon/blueprints/blueprint.dart';
+import 'package:axon/core/validation/validation.dart';
+import 'package:axon/core/validation/rules.dart';
+import 'package:axon/core/reflection/attachment.dart';
 
-main(){
+// We need to import the class we are attaching to, but since Root is in bin/,
+// we can't easily import it here without a circular dependency or bad practice.
+// 
+// BETTER PATTERN: The Validator should target the Route's Type manually, OR
+// usually Routes are also in lib/. 
+// 
+// For now, I will use a string-based approach or just rely on the fact that 
+// I can attach to "Root" if I import it? No, I can't import bin/ from lib/.
+//
+// SOLUTION: Move Root route to lib/routes/root.dart as well.
 
-Hydro.server.start();
+// Let's first try to keep Root in bin/main.dart and see if we can attach to it.
+// Actually, we can't refer to 'Root' class here if it is in bin/main.dart.
+// So 'Root' class ALSO needs to be moved to lib/.
 
-}
-
-
-
-class Server extends ServerRoot{
-    
-    ServerConfiguration configuration;
-    
-    bool get logs=>true;
-
-    @override
-    List<Route> routes=[];
-
-}
-
-
-//each route will have method
-
-class Root extends Route{
-
-String get target=>'/';
-
-get(){
-
-}
-
-post(){
-
-}
-delete(){
-
-}
-put(){
-
-}
-
-custom(){
-
-}
-
-socket(){
-
-}
-
-}
+// 1. Move Root class to lib/routes/root_route.dart
+// 2. Move RootValidator to lib/validators/root_validator.dart
+// 3. Import both in main.dart

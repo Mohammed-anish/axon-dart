@@ -1,5 +1,7 @@
 import 'package:axon/blueprints/blueprint.dart';
 import 'package:axon/core/context.dart';
+import 'package:axon/core/reflection/ability_registry.dart';
+import 'package:axon/core/reflection/attachment.dart';
 import 'package:axon/core/server/server.dart';
 import 'package:axon/core/url_parser.dart';
 
@@ -7,6 +9,8 @@ final Context ctx = Context();
 
 class BootStrapper {
   void start(ServerRoot root) async {
+    AbilityRegistry.scanAndRegister();
+    AttachmentRegistry.scan();
     CoreServer coreServer = (CoreServer(
       address: root.configuration.address,
       port: root.configuration.port,

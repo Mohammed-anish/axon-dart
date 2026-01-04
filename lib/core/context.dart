@@ -22,4 +22,8 @@ class Context {
   void destroy<T>() {
     dependencies.remove(T);
   }
+
+  dynamic getDependencyByType(Type type) {
+    return dependencies[type];
+  }
 }

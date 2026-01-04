@@ -4,6 +4,8 @@ import 'package:axon/blueprints/blueprint.dart';
 import 'package:axon/core/response.dart' hide File;
 import 'package:axon/core/route_provider.dart';
 import 'package:axon/core/template_engine.dart';
+import 'package:axon/core/reflection/attachment.dart';
+import 'package:axon/core/validation/validation.dart';
 
 class RequestHandler {
   List<WebSocket> socketClients = [];
@@ -19,6 +21,22 @@ class RequestHandler {
         return;
       }
       Request req = await Request.fromHttpRequest(request, variables);
+
+      // Validation Hook
+      final attachments = AttachmentRegistry.get<Validation>(route.runtimeType);
+      for (var validation in attachments) {
+        final errors = validation.validate(req);
+
+        if (errors.isNotEmpty) {
+          request.response.statusCode = HttpStatus.badRequest;
+          request.response.write(
+            {'error': 'Validation Failed', 'fields': errors}.toString(),
+          );
+          request.response.close();
+          return;
+        }
+      }
+
       Response? response =
           await (handleMethod(route, request.method)?.call(req) ??
               route.custom(request.method, req));

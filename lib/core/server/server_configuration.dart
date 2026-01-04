@@ -8,5 +8,5 @@ class ServerConfiguration {
 
 final defaultServerConfiguration = ServerConfiguration(
   address: InternetAddress.anyIPv4,
-  port: 5567,
+  port: 5575,
 );

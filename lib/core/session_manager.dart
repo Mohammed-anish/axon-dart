@@ -2,9 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:axon/session_drivers/redis_session_driver.dart';
+import 'package:axon/session_drivers/memory_session_driver.dart';
 import 'package:axon/session_drivers/session_driver.dart';
-
 
 class Session {
   final Map<String, dynamic> _values;
@@ -31,7 +30,7 @@ class SessionManager {
   static const String sessionIdLable = 'sessionId';
 
   static const Duration sessionExpiry = Duration(hours: 2);
-  SessionDriver driver = RedisSessionDriver();
+  SessionDriver driver = MemorySessionDriver(); // Defaulting to Memory for dev
   static SessionManager? _instance;
   static SessionManager get instance => _instance ??= SessionManager();
 
@@ -46,14 +45,16 @@ class SessionManager {
       return Session({SessionManager.sessionIdLable: sessionId})
         .._manager = this;
     } else {
-      Map<String, dynamic>? sessionData = await driver.get(
-        request.cookies
-            .where((element) => element.name == SessionManager.sessionIdLable)
-            .first
-            .value,
-      );
+      Map<String, dynamic>? sessionData = await driver.get(session.value);
+
+      // Fix: If sessionData is null (expired/missing on server), start empty or new
+      if (sessionData == null) {
+        // Alternative: could regenerate ID, but for now just empty map
+        sessionData = {};
+      }
+
       return Session(
-        sessionData!..addAll({SessionManager.sessionIdLable: session.value}),
+        sessionData..addAll({SessionManager.sessionIdLable: session.value}),
       ).._manager = this;
     }
   }
